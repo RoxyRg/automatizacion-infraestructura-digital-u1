@@ -1,0 +1,17 @@
+EVIDENCIAS REALES A CAPTURAR EN LA MAQUINA DEL ESTUDIANTE
+
+01-terminal-docker-version.png      -> docker --version y docker compose version
+02-hello-world.png                 -> docker run --rm hello-world
+03-compose-yml.png                -> archivo stack-aemf.yml en VS Code
+04-build-up.png                   -> docker compose -f stack-aemf.yml up -d --build
+05-docker-ps.png                  -> docker compose -f stack-aemf.yml ps
+06-frontend-home.png              -> http://localhost/home
+07-frontend-login.png             -> login admin con 12345678, sin mostrar JWT
+08-backend.png                    -> http://localhost:8080/
+09-phpmyadmin.png                 -> http://localhost:9090 (usuario admin)
+10-mysql-tablas.png               -> sistema_ventas_db y tablas visibles en phpMyAdmin
+11-vscode.png                     -> VS Code con proyecto y extensiones
+12-git.png                        -> git --version
+13-github.png                     -> repositorio propio con README subido
+
+Usar capturas autenticas, no inventadas. Ocultar cualquier token, clave personal o informacion privada.

@@ -1,0 +1,12 @@
+UNIDAD I - AUTOMATIZACIÓN DE INFRAESTRUCTURA DIGITAL
+
+1. El instrumento exige un README EN FORMA DE REPORTE. El archivo principal del repositorio se llama README.md.
+2. Se adjunta una versión PDF como complemento para portada formal, texto justificado, interlineado 1.15, bibliografía con sangría francesa y páginas numeradas. El PDF NO sustituye README.md ni la subida a GitHub.
+3. Este paquete trae README.md, images/logo_utng.png, evidencias/capturas, reporte PDF y matriz. Las seis capturas son originales del archivo Capturas.odt aportado por el estudiante.
+4. Antes de copiar el README en tu proyecto local, conserva una copia del README.MD ya existente si hay cambios propios. En Linux, README.MD y README.md son dos archivos distintos; no dejes ambos como portadas duplicadas.
+5. Copia README.md, images/logo_utng.png y evidencias/capturas/ a la raíz de tu carpeta automatizacion-unidad1-aemf. Conserva las fuentes originales, Dockerfiles, scripts, stack y SQL. Este ZIP no los reemplaza ni toca Docker.
+6. Falta verificar visualmente VS Code y extensiones; publicar el README y la aplicación en tu propio repositorio de GitHub; asegurar que la corrección MySQL queda integrada y puede inicializarse desde cero (sin borrar el volumen actual); presentar el portafolio y asistencia.
+7. El repositorio original del profesor es de solo lectura para el estudiante. No intentes subir cambios a la cuenta del profesor: crea un repositorio NUEVO propio, o un fork, y publica allí tu trabajo.
+8. No ejecutar docker compose down -v ni docker system prune porque podrían afectar datos.
+
+ACTUALIZACION 12/10/2026: Se agregó la séptima captura de versiones de VS Code, Git, Docker, Compose y extensiones. Debes volver a copiar README.md, PDF y la carpeta evidencias/capturas al repositorio del proyecto local antes de publicar.

@@ -1,0 +1,6 @@
+node_modules/
+**/node_modules/
+.evidence-secrets/
+evidencias/salidas/.login-raw.json
+*.log
+.DS_Store

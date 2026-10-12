@@ -1,0 +1,72 @@
+name: automatizacion-unidad1-aemf
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: qwerty
+      MYSQL_DATABASE: sistema_ventas_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+    volumes:
+      - dbfiles:/var/lib/mysql
+      - ./dbfiles/sistema_ventas_db_rev1.1.sql:/docker-entrypoint-initdb.d/01_sistema_ventas_db.sql:ro
+      - ./dbfiles/02_mysql_native_auth.sql:/docker-entrypoint-initdb.d/02_mysql_native_auth.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 40s
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "9090:80"
+    environment:
+      PMA_ARBITRARY: "1"
+      PMA_HOST: mysql-db
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+  sistema-ventas-back:
+    build:
+      context: ./sistema-ventas-back
+      dockerfile: Dockerfile
+    image: sistema-ventas-back:unidad1
+    container_name: sistema-ventas-back
+    restart: unless-stopped
+    ports:
+      - "8080:3000"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 20s
+
+  sistema-ventas-front:
+    build:
+      context: ./angular
+      dockerfile: Dockerfile
+    image: sistema-ventas-front:unidad1
+    container_name: sistema-ventas-front
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      sistema-ventas-back:
+        condition: service_healthy
+
+volumes:
+  dbfiles:
