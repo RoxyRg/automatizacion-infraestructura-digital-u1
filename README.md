@@ -448,7 +448,6 @@ Para revisar que el entorno funcionara, fui comprobando los servicios por separa
 | Frontend | Abrí la página principal y entré a la pantalla administrativa. | Capturas 02 y 06. |
 | Herramientas | Revisé las versiones, las extensiones y los paquetes instalados. | Capturas 07, 13 y 13b. |
 | GitHub | Publiqué mi README, archivos de Docker, PDF y capturas en mi repositorio. | Capturas 08, 09, 15 y 16; registro `13-git-publicacion.txt`. |
-
 | MySQL nuevo y conexión del backend | Probé la inicialización con ocho tablas, `mysql_native_password` y HTTP 200 desde un backend temporal. | Capturas 14 y 14b; apartado 6.8. |
 
 Además, conservé los comandos del apartado 6 para repetir las pruebas si necesito volver a levantar la aplicación.
