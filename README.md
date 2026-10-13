@@ -40,25 +40,25 @@ No todo funcionó desde el primer intento. Aunque las imágenes se construyeron,
 
 ## 2. Objetivo
 
-Instalar, configurar y comprobar un entorno de trabajo para automatización usando Docker y Docker Compose. Para ello desplegué el sistema de ventas del profesor, formado por un frontend, un backend, MySQL y phpMyAdmin, y documenté las pruebas realizadas en Linux.
+Mi objetivo en esta práctica fue preparar y comprobar un entorno de trabajo con Docker y Docker Compose. Para hacerlo, utilicé el sistema de ventas que compartió el profesor y fui revisando que el frontend, el backend, MySQL y phpMyAdmin funcionaran juntos en mi equipo con Linux.
 
 ## 3. Herramientas utilizadas
 
 ### 3.1 Docker Engine
 
-Docker permite ejecutar aplicaciones dentro de contenedores. Cada contenedor incluye lo necesario para que funcione su servicio, sin mezclar sus dependencias con las de otros programas instalados en el equipo. En esta actividad lo utilicé para ejecutar MySQL, phpMyAdmin, el backend y el frontend. También aprendí a distinguir una **imagen**, que sirve como base para crear el contenedor, de un **contenedor**, que es el servicio cuando ya está creado o en ejecución. Otro elemento importante es el **volumen**, porque guarda los datos de MySQL aunque un contenedor se detenga.
+Para esta práctica usé Docker porque me permite ejecutar cada parte de la aplicación en su propio contenedor. Así no tuve que instalar MySQL ni Node.js directamente para poner a funcionar el proyecto. Mientras trabajaba entendí mejor la diferencia entre una **imagen**, que sirve como base, y un **contenedor**, que es lo que Docker crea y ejecuta a partir de esa imagen. También aprendí a usar un **volumen** para que MySQL conserve sus datos al detener los contenedores.
 
 ### 3.2 Docker Compose
 
-Docker Compose me permitió definir los cuatro servicios dentro de un archivo `.yml`, en lugar de iniciar cada contenedor por separado. Ahí coloqué los puertos, nombres de servicios, imágenes, variables de entorno, volúmenes y dependencias. Para esta actividad utilicé `stack-iniciales-alumno.yml` y `stack-aemf.yml`, que tienen la configuración de la misma aplicación. Con `docker compose up -d --build` se construyen las imágenes necesarias y se ponen en marcha los servicios.
+Con Docker Compose reuní la configuración de los cuatro servicios en archivos `.yml`. Me resultó más sencillo que iniciarlos uno por uno, porque en el mismo archivo pude revisar los puertos, nombres, imágenes, variables, volúmenes y dependencias. Dejé esa configuración en `stack-iniciales-alumno.yml` y `stack-aemf.yml`. Para construir e iniciar la aplicación utilicé `docker compose up -d --build`.
 
 ### 3.3 Docker y Swagger
 
-En la rúbrica se menciona Docker Swagger. Swagger se utiliza para describir y consultar los servicios de una API, por ejemplo mediante Swagger UI y una especificación OpenAPI. También se puede ejecutar Swagger UI dentro de Docker. En el repositorio del profesor no encontré una especificación OpenAPI que hubiera que levantar como un servicio adicional, así que expliqué para qué sirve sin modificar la aplicación para agregar algo que no venía en el ejercicio.
+En la rúbrica también encontré el término “Docker Swagger”, por lo que revisé para qué sirve Swagger. Entendí que permite consultar y documentar una API, por ejemplo con Swagger UI y OpenAPI, y que también puede ejecutarse dentro de un contenedor. Como el repositorio que usamos no incluye una especificación OpenAPI ni pide configurar ese servicio aparte, decidí describir la herramienta sin agregar otro contenedor al sistema de ventas.
 
 ### 3.4 Visual Studio Code y extensiones
 
-Usé Visual Studio Code para revisar los Dockerfile, los archivos YAML, la configuración de Nginx y el README. Las extensiones de Docker y Containers ayudan a trabajar con contenedores; la extensión YAML facilita la lectura de los archivos de configuración, y GitLens permite revisar los cambios de Git. En mi equipo comprobé que estas extensiones estaban instaladas.
+Usé Visual Studio Code para revisar los Dockerfile, los archivos YAML, la configuración de Nginx y el README. Con las extensiones de Docker y Containers pude identificar mejor los archivos relacionados con los contenedores. La extensión YAML me ayudó a leer la configuración y con GitLens pude revisar los cambios. También comprobé desde la terminal que estas extensiones estuvieran instaladas.
 
 ### 3.5 Git y GitHub
 
@@ -96,7 +96,7 @@ Estos fueron los datos que obtuve en la terminal:
 
 ### 4.2 Cómo se instalan las herramientas
 
-Para que también quede explicado el proceso de instalación, estos son los pasos correspondientes a un equipo con Ubuntu o una distribución basada en Debian. En mi computadora utilicé las instalaciones que ya tenía y comprobé su funcionamiento; los siguientes comandos quedan documentados para preparar otro equipo.
+Aunque yo ya tenía instaladas las herramientas, quise dejar escritos los comandos de instalación para que se entienda cómo prepararía otro equipo con Ubuntu o una distribución basada en Debian. En mi computadora no tuve que reinstalarlas: comprobé que ya estaban disponibles y funcionaban.
 
 **Git.** Se puede instalar desde la terminal con:
 
@@ -108,7 +108,7 @@ git --version
 
 En mi caso, al ejecutar `sudo apt install git -y`, el sistema indicó que Git ya estaba instalado y que no había paquetes nuevos que agregar.
 
-**Visual Studio Code.** Se descarga el paquete para Linux desde la [página oficial](https://code.visualstudio.com/download). Una vez descargado el archivo `.deb`, se puede instalar desde la carpeta donde se encuentre:
+**Visual Studio Code.** Si necesitara instalarlo en otra computadora, descargaría el archivo `.deb` para Linux desde su [página oficial](https://code.visualstudio.com/download) y lo instalaría desde la carpeta donde lo guardé:
 
 ```bash
 sudo apt install ./NOMBRE_DEL_ARCHIVO.deb
@@ -125,7 +125,7 @@ code --install-extension eamodio.gitlens
 code --list-extensions
 ```
 
-**Docker.** Para instalar Docker Engine en Ubuntu hay que agregar primero el repositorio oficial y después instalar los paquetes. El procedimiento de referencia es el siguiente:
+**Docker.** Si tuviera que preparar otro equipo con Ubuntu, primero agregaría el repositorio oficial de Docker y después instalaría los paquetes. Estos son los comandos que consulté para documentar ese procedimiento:
 
 ```bash
 sudo apt update
@@ -140,7 +140,7 @@ sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
 
-También se puede utilizar Docker Desktop. En Linux es necesario tener disponible la virtualización KVM y descargar el paquete `.deb` desde el [sitio oficial de Docker Desktop](https://docs.docker.com/desktop/setup/install/linux/). Si el archivo se encuentra en Descargas, se instala indicando su ruta real; después se inicia el servicio del usuario y se selecciona el contexto:
+Para utilizar Docker Desktop en Linux, primero revisaría que KVM esté disponible. Después descargaría el paquete `.deb` desde la [página oficial de Docker Desktop](https://docs.docker.com/desktop/setup/install/linux/), indicaría la ruta donde lo guardé e iniciaría el servicio para seleccionar el contexto `desktop-linux`:
 
 ```bash
 sudo apt install /ruta/al/archivo/docker-desktop-amd64.deb
@@ -179,11 +179,11 @@ Para MySQL utilicé la base `sistema_ventas_db`, el usuario `admin` y las contra
 
 ### 5.2 Dockerfile del backend
 
-En `sistema-ventas-back/Dockerfile` utilicé Node.js `18.17.1-alpine`, tal como se pide en el instrumento. El archivo crea la carpeta `/usr/src/app`, copia `package.json` y `package-lock.json`, instala las dependencias con `npm install`, copia el resto del backend, expone el puerto `3000` y ejecuta `node index.js`. Desde mi computadora accedo al backend por el puerto `8080`, que Docker redirige al `3000` del contenedor.
+Preparé `sistema-ventas-back/Dockerfile` con la imagen `node:18.17.1-alpine`, como pide el profesor. Ahí indiqué que se trabajara en `/usr/src/app`, que se copiaran `package.json` y `package-lock.json`, que se ejecutara `npm install` y que después se copiara el resto del backend. También dejé expuesto el puerto `3000` y el comando `node index.js`. Desde el navegador pude entrar por `localhost:8080`, porque Compose conecta ese puerto de mi equipo con el `3000` del contenedor.
 
 ### 5.3 Dockerfile del frontend
 
-Para el frontend utilicé `nginx:stable-alpine`. Su Dockerfile declara el volumen `/temp`, limpia la carpeta donde Nginx publica las páginas y copia `nginx.conf`, `mime.types` y los archivos de `sistema-ventas-front`. El servicio escucha en el puerto `80` y se inicia con `nginx -g 'daemon off;'`.
+Para el frontend utilicé `nginx:stable-alpine`. En su Dockerfile declaré el volumen `/temp`, eliminé los archivos que trae Nginx en su carpeta web y copié `nginx.conf`, `mime.types` y los archivos compilados de `sistema-ventas-front`. Finalmente, dejé expuesto el puerto `80` y el comando `nginx -g 'daemon off;'` para mantener el servidor funcionando.
 
 ### 5.4 Levantar los contenedores
 
@@ -259,7 +259,7 @@ También utilicé este comando para consultar las tablas y revisar el usuario ca
 docker exec mysql-db sh -c 'MYSQL_PWD=admin mysql -uadmin sistema_ventas_db -e "SHOW TABLES; SELECT username FROM tbl_usuario LIMIT 3;"'
 ```
 
-Entre las tablas del proyecto están `tbl_usuario`, `tbl_rol`, `tbl_rol_usuario`, `tbl_categoria`, `tbl_producto`, `tbl_venta`, `tbl_detalle_venta` y `tbl_imagen_producto`.
+Al revisar el archivo SQL del proyecto identifiqué estas tablas: `tbl_usuario`, `tbl_rol`, `tbl_rol_usuario`, `tbl_categoria`, `tbl_producto`, `tbl_venta`, `tbl_detalle_venta` y `tbl_imagen_producto`.
 
 ### 6.5 Página de inicio e ingreso como administrador
 
@@ -279,7 +279,7 @@ curl -i -X POST http://localhost:8080/api/auth \
   -d '{"username":"admin","password":"12345678"}'
 ```
 
-Si se guarda la respuesta de esa petición, es importante ocultar el token JWT antes de subirla a GitHub. El script de pruebas genera una versión sin el token.
+Cuando guardo el resultado de esta petición, oculto el token JWT antes de compartirlo. Para eso agregué al script de verificación una salida donde se conserva el resultado del inicio de sesión, pero no el token completo.
 
 ### 6.6 Error que encontré y cómo lo resolví
 
@@ -289,15 +289,15 @@ El problema era que el usuario `admin` de MySQL estaba usando `caching_sha2_pass
 
 Dejé ese mismo ajuste en `dbfiles/02_mysql_native_auth.sql`, que está referenciado en los dos archivos Compose para las instalaciones nuevas. La solución manual quedó comprobada con la base que ya tenía funcionando. No eliminé mi volumen de datos para repetir la prueba desde cero. `mysql_native_password` y las contraseñas del ejemplo se utilizan solo para este laboratorio, no como configuración recomendada para producción.
 
-### 6.7 Script de verificación
+### 6.7 Cómo reuní las pruebas en un solo comando
 
-Dentro de `scripts/verificar.sh` dejé reunidas las comprobaciones principales: versiones, `hello-world`, validación del YAML, estado de contenedores, respuesta del backend, base de datos e inicio de sesión.
+Para no repetir manualmente cada comprobación, preparé `scripts/verificar.sh`. Este archivo ejecuta las pruebas de versiones, `hello-world`, validación del YAML, contenedores, backend, base de datos e inicio de sesión. Es un script de Bash que dejé dentro del proyecto para poder repetir las verificaciones cuando lo necesite.
 
 ```bash
 ./scripts/verificar.sh
 ```
 
-Los resultados de estas pruebas se pueden guardar en `evidencias/salidas/`. Las capturas que aparecen en este reporte son las que obtuve durante el trabajo en mi equipo.
+El script guarda sus resultados en `evidencias/salidas/`. Para el reporte utilicé las capturas que tomé mientras trabajaba en mi equipo, y dejé los comandos para repetir las comprobaciones.
 
 ## 7. Publicación en GitHub
 
@@ -327,7 +327,7 @@ git remote -v
 
 ### 7.3 Creé y conecté mi repositorio
 
-En GitHub creé un repositorio público llamado `automatizacion-infraestructura-digital-u1`, sin agregar otro README desde la página. Después configuré el remoto `origin` con la dirección de mi repositorio:
+Primero creé en GitHub el repositorio público `automatizacion-infraestructura-digital-u1`. Elegí dejarlo vacío porque ya tenía preparado mi README. Después lo conecté con mi carpeta de trabajo mediante el remoto `origin`:
 
 ```bash
 git remote add origin https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1.git
@@ -379,7 +379,7 @@ Otra parte importante fue trabajar con Git. Antes de publicar, revisé los archi
 
 ## 10. Recursos consultados
 
-Para realizar la práctica consulté el repositorio del profesor y documentación de las herramientas utilizadas:
+Para resolver las dudas que me fueron saliendo consulté el repositorio del profesor y las páginas de documentación de las herramientas que utilicé:
 
 | Recurso | Para qué lo utilicé |
 |---|---|
