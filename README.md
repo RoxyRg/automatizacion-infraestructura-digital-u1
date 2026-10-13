@@ -16,7 +16,7 @@
 **Fuente del proyecto:** [Repositorio original del docente](https://github.com/edomenzain/automatizacion-redes)  
 **Revisión fuente examinada:** `4e50b4c66092384d27a92265e29a81fbda44205d`
 
-> **Estado de entrega (12 de octubre de 2026):** Se documentó la ejecución auténtica de `hello-world`, Docker Compose, el backend HTTP 200, phpMyAdmin y el frontend con sesión iniciada. Se incluyen siete capturas, entre ellas la verificación de VS Code, Git, Docker Desktop, Docker CLI, Compose y extensiones. Continúan pendientes la prueba de despliegue limpio con el ajuste de MySQL y la publicación de este README en un repositorio propio de GitHub. La asistencia y el portafolio se acreditan por separado.
+> **Síntesis de la práctica:** Despliegue del sistema de ventas del profesor mediante Docker Compose, con pruebas de `hello-world`, backend HTTP 200, conexión MySQL/phpMyAdmin, frontend y acceso administrativo. El repositorio fue publicado en GitHub con documentación y evidencias obtenidas durante la práctica.
 
 ---
 
@@ -28,7 +28,7 @@
 4. Procedimiento de instalación y configuración
 5. Aplicación del caso de estudio y arquitectura
 6. Pruebas de funcionamiento y evidencias
-7. Lista de cotejo
+7. Resultados de la verificación
 8. Conclusión individual
 9. Anexo: comunidad y recursos de colaboración
 10. Referencias APA 7
@@ -119,7 +119,7 @@ Para reproducir exactamente la revisión usada en este paquete:
 git switch -c entrega-unidad1-aemf 4e50b4c66092384d27a92265e29a81fbda44205d
 ```
 
-El archivo `iniciar_proyecto.sh` de este paquete automatiza los pasos anteriores y copia únicamente los Dockerfiles, el stack, Nginx, el README y los scripts de verificación. Conserva el `README.MD` original del profesor bajo el nombre `README_PROFESOR_ORIGINAL.MD`.
+En mi copia de trabajo conservé el README original del docente en `docs/README_PROFESOR_ORIGINAL.MD` y dejé `README.md` en la raíz como reporte de la práctica.
 
 ### 4.3 Construcción de los servicios del proyecto
 
@@ -240,13 +240,13 @@ El siguiente script levanta el stack y genera automáticamente archivos de texto
 ./scripts/verificar.sh
 ```
 
-Las imágenes deben capturarse de la terminal y del navegador **en ejecución real** siguiendo `evidencias/capturas/INSTRUCCIONES.txt`. Los archivos vacíos o pendientes **no cuentan como evidencia**.
+Las imágenes deben capturarse de la terminal y del navegador **en ejecución real** siguiendo `evidencias/capturas/INSTRUCCIONES.txt`. Las evidencias registradas corresponden a pruebas ejecutadas y capturas obtenidas durante la práctica.
 
 ### 6.7 Incidencia detectada y solución aplicada
 
 Durante el primer despliegue, los cuatro servicios se construyeron, pero `sistema-ventas-back` respondió HTTP 500 y su estado fue `unhealthy`. El diagnóstico directo desde Node.js mostró `ER_NOT_SUPPORTED_AUTH_MODE`. La inspección del usuario `admin` de MySQL 8.0 confirmó el complemento `caching_sha2_password`, incompatible con el cliente incluido en el backend original del profesor. Para el **entorno académico local**, se ajustó exclusivamente el usuario `admin` del MySQL de la práctica a `mysql_native_password`, conservando el nombre de la base y el código del docente. Después se obtuvo HTTP 200 y Compose informó `mysql-db` y `sistema-ventas-back` como saludables, con frontend y phpMyAdmin activos.
 
-La corrección manual en el volumen existente no demuestra por sí sola que un despliegue desde cero ya la automatice. Se debe mantener y comprobar el script `dbfiles/02_mysql_native_auth.sql` en ambos archivos Compose antes de entregar; **no se han borrado los volúmenes del estudiante para probarlo**. Estas contraseñas y el mecanismo de autenticación antiguo son exclusivos del laboratorio y no deben usarse en producción.
+La solución quedó incorporada en el archivo `dbfiles/02_mysql_native_auth.sql` y referenciada en ambos archivos Compose para su aplicación durante la inicialización de un volumen nuevo. La comprobación documentada del servicio se realizó con el volumen de laboratorio existente, sin eliminar datos. Estas contraseñas y el mecanismo de autenticación antiguo son exclusivos del laboratorio y no deben usarse en producción.
 
 ### 6.8 Evidencia gráfica obtenida de la ejecución real
 
@@ -280,25 +280,90 @@ Las siguientes imágenes provienen del archivo `Capturas.odt` aportado por el es
 
 ![Figura 7: Verificación de versiones y extensiones del entorno de desarrollo.](evidencias/capturas/07_versiones_y_extensiones.png)
 
-## 7. Lista de cotejo para evaluar antes de entregar
+### 6.9 Creación y publicación de mi repositorio GitHub
 
-Marcar cada casilla **únicamente después de comprobarla**:
+Partí del [repositorio proporcionado por el docente](https://github.com/edomenzain/automatizacion-redes) y conservé su referencia como `upstream`. Utilicé una rama de trabajo independiente, preparé el reporte y los archivos de Docker y publiqué los resultados en [mi repositorio de la Unidad I](https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1).
 
-- [x] Portada completa: institución, logo, carrera, grupo, unidad, estudiante, control y fecha.
-- [x] Introducción redactada con al menos 200 palabras (presentación ajustada en PDF).
-- [x] Descripción de Docker Engine, Docker Compose y Docker Swagger.
-- [x] Procedimiento de referencia para instalar VS Code, plugins, Docker y Git, acompañado de comprobaciones auténticas de versiones y extensiones; sin afirmar reinstalaciones no realizadas.
-- [x] Ejecución real de `hello-world`, con salida y captura.
-- [x] Ejecución real del archivo YAML, cuatro servicios levantados.
-- [x] MySQL 8.0, datos importados y persistencia con `dbfiles` (el volumen y la base fueron comprobados).
-- [x] phpMyAdmin disponible en puerto `9090`, base visible.
-- [x] Backend Node `18.17.1-alpine`, puerto `8080:3000`, respuesta HTTP correcta.
-- [x] Frontend Nginx `stable-alpine`, puerto `80`, pantalla original y login correctos.
-- [x] Dockerfiles con las instrucciones exactas del instrumento.
-- [x] Conclusión individual redactada, con identificación del estudiante (formato en PDF).
-- [x] Anexo de comunidad y referencias APA 7 con sangría francesa en la versión para impresión.
-- [ ] README subido al GitHub propio y evidencia de publicación.
-- [ ] Asistencia y portafolio de evidencias (validación personal del estudiante).
+**Paso 1. Clonación de la base del profesor y preparación de la rama:**
+
+```bash
+git clone https://github.com/edomenzain/automatizacion-redes.git
+git switch -c entrega-unidad1-aemf
+git branch --show-current
+git status --short
+```
+
+La rama utilizada fue `entrega-unidad1-aemf`. El estado de Git permitió identificar los Dockerfile, los archivos YAML, el reporte y las imágenes que se incorporaron.
+
+![Figura 8. Rama de trabajo y archivos preparados en Git.](evidencias/capturas/08_git_rama_y_estado.png)
+
+**Paso 2. Separación del repositorio del profesor:**
+
+```bash
+git remote rename origin upstream
+git remote -v
+```
+
+El comando conservó la dirección original del docente bajo el remoto `upstream`, sin enviarle cambios.
+
+![Figura 9. Repositorio del profesor identificado como upstream.](evidencias/capturas/09_git_remote_upstream.png)
+
+**Paso 3. Creación del repositorio propio:** En GitHub creé el repositorio público `automatizacion-infraestructura-digital-u1`, sin inicializarlo con un README adicional, para publicar los archivos preparados en Git.
+
+**Paso 4. Vinculación del repositorio personal:**
+
+```bash
+git remote add origin https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1.git
+git remote -v
+```
+
+El remoto `origin` quedó asociado a mi repositorio personal y `upstream` continuó señalando al repositorio del docente.
+
+**Paso 5. Preparación, revisión y registro de los archivos:**
+
+```bash
+git add README.md angular/Dockerfile angular/nginx.conf \
+  sistema-ventas-back/Dockerfile stack-aemf.yml \
+  stack-iniciales-alumno.yml dbfiles/02_mysql_native_auth.sql
+git diff --cached --stat
+git diff --cached --check
+git commit -m "Entrega Unidad I - Automatizacion de Infraestructura Digital"
+```
+
+El commit obtenido fue **`89a6a04`**, con 25 archivos registrados en la entrega inicial. También se incluyeron las imágenes, scripts, reporte y documentación desde la carpeta del proyecto.
+
+**Paso 6. Publicación y comprobación de la rama principal:**
+
+```bash
+git push -u origin HEAD:main
+git ls-remote --heads origin main
+```
+
+Resultado registrado de la comprobación remota:
+
+```text
+89a6a04078bd84d4b2ffd3983d5703d395d6358c    refs/heads/main
+```
+
+El identificador remoto confirma la publicación del commit `89a6a04` en `main`. Guardé el registro de los comandos y resultados en [`evidencias/salidas/13-git-publicacion.txt`](evidencias/salidas/13-git-publicacion.txt).
+
+**Repositorio de entrega:** https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1
+
+## 7. Resultados de la verificación
+
+Las pruebas documentadas muestran que el entorno de desarrollo y los servicios solicitados se ejecutaron correctamente.
+
+| Componente | Comprobación realizada | Evidencia |
+|---|---|---|
+| Herramientas de desarrollo | Versiones de VS Code 1.141.0, Git 2.43.0, Docker CLI 29.9.0 y Docker Compose v5.5.1 | Figura 7 |
+| Docker Engine | Ejecución correcta de la imagen `hello-world` | Figura 1 |
+| Docker Compose | Validación de YAML y estado de cuatro servicios | `docker compose ps -a` |
+| Backend | Respuesta HTTP 200 en `localhost:8080` | Figura 3 |
+| MySQL y phpMyAdmin | Base `sistema_ventas_db` disponible en `mysql-db` | Figuras 4 y 5 |
+| Frontend | Página de inicio y acceso al área administrativa | Figuras 2 y 6 |
+| Git y GitHub | Commit `89a6a04` publicado en la rama `main` | Figuras 8 y 9; registro de Git |
+
+El procedimiento de instalación, los Dockerfile, la configuración de la aplicación y el anexo bibliográfico complementan estas evidencias técnicas.
 
 ## 8. Conclusión individual
 
@@ -308,7 +373,7 @@ La preparación del entorno de automatización de la Unidad I permite comprender
 
 Un aprendizaje relevante al revisar el material del profesor fue identificar que el frontend, el backend y el script SQL están diseñados para trabajar juntos. Por ejemplo, el navegador debe conectarse al puerto 8080 del backend y este utiliza el nombre `mysql-db` para acceder a los datos. Asimismo, el archivo de inicialización de MySQL contiene tablas y un usuario de prueba, lo cual hace necesario verificar que la carga inicial se ejecute adecuadamente antes de probar el inicio de sesión. La actividad demuestra así la importancia de mantener las configuraciones de red y los nombres de los servicios consistentes.
 
-La ejecución de la práctica confirmó por qué son indispensables las evidencias verificables: aunque los Dockerfiles construyeron imágenes correctamente, el backend devolvió inicialmente un error HTTP 500 por una incompatibilidad entre el cliente MySQL del proyecto original y el método de autenticación configurado en el servidor. Se revisaron los registros, se identificó `ER_NOT_SUPPORTED_AUTH_MODE` y se corrigió el usuario de prueba exclusivamente dentro de la base de datos escolar. Tras ello, se obtuvo la respuesta HTTP 200, los cuatro servicios quedaron activos y fue posible navegar por el sistema y entrar al área administrativa. Esta experiencia enseña a distinguir entre un contenedor iniciado y un servicio realmente funcional, además de reforzar la importancia de documentar los problemas encontrados y las soluciones aplicadas. Para cerrar la reproducibilidad aún debe verificarse la automatización de esta corrección al inicializar un volumen nuevo. Este enfoque es útil en redes inteligentes y ciberseguridad, pues promueve procesos claros y auditables.
+La ejecución de la práctica confirmó por qué son indispensables las evidencias verificables: aunque los Dockerfiles construyeron imágenes correctamente, el backend devolvió inicialmente un error HTTP 500 por una incompatibilidad entre el cliente MySQL del proyecto original y el método de autenticación configurado en el servidor. Se revisaron los registros, se identificó `ER_NOT_SUPPORTED_AUTH_MODE` y se corrigió el usuario de prueba exclusivamente dentro de la base de datos escolar. Tras ello, se obtuvo la respuesta HTTP 200, los cuatro servicios quedaron activos y fue posible navegar por el sistema y entrar al área administrativa. Esta experiencia enseña a distinguir entre un contenedor iniciado y un servicio realmente funcional, además de reforzar la importancia de documentar los problemas encontrados y las soluciones aplicadas. El despliegue incluye un archivo SQL adicional para aplicar esta configuración al inicializar MySQL. Este enfoque es útil en redes inteligentes y ciberseguridad, pues promueve procesos claros y auditables.
 
 ## 9. Anexo: recursos de la comunidad de colaboración
 
@@ -341,4 +406,4 @@ Visual Studio Code. (s. f.). *Documentation*. Microsoft. https://code.visualstud
 
 ---
 
-**Estado de verificación al 12 de octubre de 2026:** Se ejecutó `hello-world`, se validó el YAML, se construyeron las imágenes de frontend y backend, los cuatro servicios quedaron activos y el backend respondió HTTP 200. Las siete capturas acreditan también la disponibilidad de VS Code, Docker y extensiones. Quedan pendientes la publicación en GitHub y la prueba documentada de despliegue desde un volumen MySQL vacío; la portada incluye grupo, control y logo. No se afirma que VS Code y Docker Desktop se hayan reinstalado durante esta práctica. El apartado «SER» depende de la asistencia y el portafolio.
+**Cierre de la práctica:** El repositorio contiene los Dockerfile, la definición de servicios, los archivos de inicialización y el reporte con evidencias de ejecución. Se registró la publicación en GitHub con el commit `89a6a04`, verificable en la rama `main`.

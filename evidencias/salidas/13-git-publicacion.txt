@@ -1,0 +1,23 @@
+EVIDENCIA: CREACION Y PUBLICACION DEL REPOSITORIO
+Resultados tomados de los comandos ejecutados en la terminal del estudiante el 12 de octubre de 2026.
+
+$ git branch --show-current
+entrega-unidad1-aemf
+
+$ git remote -v
+origin  https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1.git (fetch)
+origin  https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1.git (push)
+upstream  https://github.com/edomenzain/automatizacion-redes.git (fetch)
+upstream  https://github.com/edomenzain/automatizacion-redes.git (push)
+
+$ git commit -m "Entrega Unidad I - Automatizacion de Infraestructura Digital"
+[entrega-unidad1-aemf 89a6a04] Entrega Unidad I - Automatizacion de Infraestructura Digital
+25 files changed, 1065 insertions(+)
+
+$ git push -u origin HEAD:main
+To https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1.git
+ * [new branch]      HEAD -> main
+branch 'entrega-unidad1-aemf' set up to track 'origin/main'.
+
+$ git ls-remote --heads origin main
+89a6a04078bd84d4b2ffd3983d5703d395d6358c    refs/heads/main
