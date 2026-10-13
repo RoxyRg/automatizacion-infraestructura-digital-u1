@@ -23,9 +23,9 @@
 5. Configuración del sistema de ventas
 6. Pruebas y capturas
 7. Publicación en GitHub
-8. Resultados obtenidos
+8. Lista de verificación y resultados
 9. Conclusión
-10. Recursos consultados
+10. Anexo: recursos de la comunidad de colaboración
 11. Referencias bibliográficas
 
 ## 1. Introducción
@@ -60,6 +60,10 @@ En la rúbrica también encontré el término “Docker Swagger”, por lo que r
 
 Usé Visual Studio Code para revisar los Dockerfile, los archivos YAML, la configuración de Nginx y el README. Con las extensiones de Docker y Containers pude identificar mejor los archivos relacionados con los contenedores. La extensión YAML me ayudó a leer la configuración y con GitLens pude revisar los cambios. También comprobé desde la terminal que estas extensiones estuvieran instaladas.
 
+En VS Code también abrí el archivo `stack-iniciales-alumno.yml`, donde se pueden ver los servicios y los datos de configuración de MySQL y phpMyAdmin.
+
+![Archivo YAML abierto en VS Code con los servicios del sistema de ventas](evidencias/capturas/11_vscode_yaml.png)
+
 ### 3.5 Git y GitHub
 
 Con Git fui registrando los cambios del proyecto. GitHub me permitió guardar la entrega en un repositorio personal para que el profesor pueda revisar el código, los archivos de configuración y las evidencias. No subí los cambios al repositorio original: lo dejé como referencia con el nombre `upstream` y usé `origin` para mi repositorio.
@@ -93,6 +97,14 @@ Estos fueron los datos que obtuve en la terminal:
 | Extensiones | Docker, Containers, YAML y GitLens, entre otras |
 
 ![Versiones de las herramientas y extensiones instaladas](evidencias/capturas/07_versiones_y_extensiones.png)
+
+Volví a consultar las versiones, el estado de Docker Desktop y la lista de extensiones para dejar otra evidencia de las herramientas que utilicé.
+
+![Versiones de VS Code, Git, Docker y extensiones en mi terminal](evidencias/capturas/13_versiones_entorno.png)
+
+Además, consulté los paquetes que Ubuntu tiene registrados como instalados. Se puede ver que Git, VS Code y Docker Desktop ya estaban disponibles en mi equipo; no tuve que reinstalarlos.
+
+![Paquetes Git, VS Code y Docker Desktop instalados según dpkg](evidencias/capturas/13b_paquetes_instalados.png)
 
 ### 4.2 Cómo se instalan las herramientas
 
@@ -181,9 +193,34 @@ Para MySQL utilicé la base `sistema_ventas_db`, el usuario `admin` y las contra
 
 Preparé `sistema-ventas-back/Dockerfile` con la imagen `node:18.17.1-alpine`, como pide el profesor. Ahí indiqué que se trabajara en `/usr/src/app`, que se copiaran `package.json` y `package-lock.json`, que se ejecutara `npm install` y que después se copiara el resto del backend. También dejé expuesto el puerto `3000` y el comando `node index.js`. Desde el navegador pude entrar por `localhost:8080`, porque Compose conecta ese puerto de mi equipo con el `3000` del contenedor.
 
+Este es el contenido del Dockerfile que utilicé:
+
+```dockerfile
+FROM node:18.17.1-alpine
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "index.js"]
+```
+
 ### 5.3 Dockerfile del frontend
 
 Para el frontend utilicé `nginx:stable-alpine`. En su Dockerfile declaré el volumen `/temp`, eliminé los archivos que trae Nginx en su carpeta web y copié `nginx.conf`, `mime.types` y los archivos compilados de `sistema-ventas-front`. Finalmente, dejé expuesto el puerto `80` y el comando `nginx -g 'daemon off;'` para mantener el servidor funcionando.
+
+En este caso el Dockerfile del frontend quedó así:
+
+```dockerfile
+FROM nginx:stable-alpine
+VOLUME /temp
+RUN rm -rf /usr/share/nginx/html/*
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY mime.types /etc/nginx/mime.types
+COPY sistema-ventas-front/ /usr/share/nginx/html/
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+```
 
 ### 5.4 Levantar los contenedores
 
@@ -231,7 +268,19 @@ En la terminal apareció `Hello from Docker!`, lo que confirmó que Docker podí
 
 ### 6.2 Revisión de Docker Compose
 
+Para ver tanto el archivo de configuración como los contenedores, utilicé:
+
+```bash
+docker compose -f stack-aemf.yml config --services
+docker compose -f stack-aemf.yml config -q
+docker compose -f stack-aemf.yml ps -a
+```
+
 Después validé el archivo YAML y levanté la aplicación con los comandos indicados en el apartado 5. Al revisar el resultado, MySQL y el backend aparecieron como `healthy`, mientras que el frontend y phpMyAdmin estaban en ejecución. De esta forma comprobé que los cuatro servicios estaban activos.
+
+En esta captura aparece la salida de `docker compose -f stack-aemf.yml ps -a`: MySQL y el backend están saludables, mientras que phpMyAdmin y el frontend permanecen en ejecución. También validé el YAML con `config -q`, que no mostró errores.
+
+![Cuatro servicios ejecutándose en Docker Compose y validación del YAML](evidencias/capturas/10_compose_servicios.png)
 
 ### 6.3 Respuesta del backend
 
@@ -287,7 +336,7 @@ Al principio el backend no funcionaba bien. En Docker aparecía `unhealthy` y, c
 
 El problema era que el usuario `admin` de MySQL estaba usando `caching_sha2_password` y el cliente de base de datos que trae el proyecto no era compatible con ese método. Para solucionarlo, cambié la autenticación de ese usuario a `mysql_native_password` dentro del MySQL de esta práctica. Después la página del backend respondió con HTTP `200` y los cuatro servicios pudieron iniciarse correctamente.
 
-Dejé ese mismo ajuste en `dbfiles/02_mysql_native_auth.sql`, que está referenciado en los dos archivos Compose para las instalaciones nuevas. La solución manual quedó comprobada con la base que ya tenía funcionando. No eliminé mi volumen de datos para repetir la prueba desde cero. `mysql_native_password` y las contraseñas del ejemplo se utilizan solo para este laboratorio, no como configuración recomendada para producción.
+Dejé ese mismo ajuste en `dbfiles/02_mysql_native_auth.sql`, que está referenciado en los dos archivos Compose para las instalaciones nuevas. Primero comprobé la corrección sobre la base que ya tenía funcionando y después la repetí con contenedores temporales y una base recién inicializada, como explico en el apartado 6.8. `mysql_native_password` y las contraseñas del ejemplo se utilizan solo para este laboratorio, no como configuración recomendada para producción.
 
 ### 6.7 Cómo reuní las pruebas en un solo comando
 
@@ -298,6 +347,33 @@ Para no repetir manualmente cada comprobación, preparé `scripts/verificar.sh`.
 ```
 
 El script guarda sus resultados en `evidencias/salidas/`. Para el reporte utilicé las capturas que tomé mientras trabajaba en mi equipo, y dejé los comandos para repetir las comprobaciones.
+
+### 6.8 Prueba de MySQL con una instalación nueva
+
+Para comprobar que el problema de autenticación no regresara al instalar la aplicación en otro equipo, hice una prueba adicional con una base MySQL nueva. Usé el script `scripts/probar_mysql_limpio.sh`, que creó dos contenedores temporales y una red propia, sin publicar puertos ni reutilizar el volumen de MySQL de mi aplicación principal.
+
+Lo ejecuté desde la carpeta del proyecto:
+
+```bash
+mkdir -p evidencias/salidas
+set -o pipefail
+./scripts/probar_mysql_limpio.sh 2>&1 | tee evidencias/salidas/14-prueba-mysql-limpio.txt
+```
+
+El resultado final fue **`PRUEBA CORRECTA: 8 tablas, plugin mysql_native_password, backend HTTP 200`**. El script revisó que las tablas se hubieran importado, que el usuario `admin` empleara el método de autenticación esperado y que el backend temporal respondiera correctamente.
+
+![Resultado de la prueba limpia de MySQL: ocho tablas, autenticación correcta y backend HTTP 200](evidencias/capturas/14_mysql_limpio_correcto.png)
+
+Cuando terminé, detuve únicamente los dos contenedores de prueba y eliminé la red temporal:
+
+```bash
+docker stop aemf-u1-back-prueba aemf-u1-mysql-prueba
+docker network rm aemf-u1-red-prueba
+```
+
+![Comandos y resultado de la limpieza de los contenedores y la red temporales](evidencias/capturas/14b_limpieza_temporal.png)
+
+Con esto pude probar el arranque inicial sin borrar `automatizacion-unidad1-aemf_dbfiles` ni modificar los contenedores de mis otros proyectos.
 
 ## 7. Publicación en GitHub
 
@@ -325,6 +401,10 @@ git remote -v
 
 ![Remoto del profesor conservado como upstream](evidencias/capturas/09_git_remote_upstream.png)
 
+Más adelante revisé de nuevo los remotos y el commit que tenía publicado en ese momento. En la terminal quedó registrada mi rama y el repositorio al que envié la práctica.
+
+![Revisión del remoto origin, upstream y el commit publicado](evidencias/capturas/15_git_publicacion_terminal.png)
+
 ### 7.3 Creé y conecté mi repositorio
 
 Primero creé en GitHub el repositorio público `automatizacion-infraestructura-digital-u1`. Elegí dejarlo vacío porque ya tenía preparado mi README. Después lo conecté con mi carpeta de trabajo mediante el remoto `origin`:
@@ -348,22 +428,30 @@ git commit -m "Entrega Unidad I - Automatizacion de Infraestructura Digital"
 git push -u origin HEAD:main
 ```
 
-El primer commit fue `89a6a04`. Después actualicé el README y el PDF y publiqué esos cambios con el commit `b87a656`. El resultado se puede consultar en [mi repositorio](https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1). También guardé una comprobación de la rama remota en `evidencias/salidas/13-git-publicacion.txt`.
+El primer commit fue `89a6a04`. Después seguí corrigiendo el README y el PDF; también quedó publicado el commit `0d47166`, en el que organicé la entrega. El historial de estos cambios se puede consultar en [mi repositorio](https://github.com/RoxyRg/automatizacion-infraestructura-digital-u1). También guardé una comprobación de la rama remota en `evidencias/salidas/13-git-publicacion.txt`.
 
-## 8. Resultados obtenidos
+Finalmente abrí el repositorio desde el navegador y comprobé que GitHub mostraba el README con el logotipo de la UTNG y los datos de mi práctica.
 
-Al terminar las pruebas, pude comprobar lo siguiente:
+![README de la práctica publicado en GitHub](evidencias/capturas/16_github_readme_publicado.png)
 
-| Parte revisada | Lo que observé |
-|---|---|
-| Docker | La imagen `hello-world` se ejecutó y mostró el mensaje de éxito. |
-| Docker Compose | Los cuatro servicios quedaron en ejecución. |
-| Backend | Respondió con HTTP `200` en el puerto `8080`. |
-| MySQL | La base `sistema_ventas_db` quedó disponible. |
-| phpMyAdmin | Pude entrar y revisar la base de datos. |
-| Frontend | Abrió la página de inicio y pude entrar al área administrativa. |
-| Herramientas | Comprobé las versiones de VS Code, Git, Docker y Compose. |
-| GitHub | Publiqué el código, el README, el PDF y las capturas en mi repositorio. |
+## 8. Lista de verificación y resultados
+
+Para revisar que el entorno funcionara, fui comprobando los servicios por separado. En esta tabla anoté las pruebas que sí realicé y dónde dejé sus evidencias:
+
+| Qué revisé | Resultado que comprobé | Evidencia que guardé |
+|---|---|---|
+| Docker | Ejecuté `hello-world` y apareció el mensaje de éxito. | Captura 01. |
+| Docker Compose | Validé el YAML y vi los cuatro servicios levantados. | Captura 10, con estado de todos los servicios. |
+| MySQL | El contenedor mostró estado `healthy` y la base `sistema_ventas_db` estaba disponible. | Captura 05 y salida del servicio. |
+| phpMyAdmin | Pude iniciar sesión y consultar la base del ejercicio. | Capturas 04 y 05. |
+| Backend | La dirección `localhost:8080` respondió con HTTP `200`. | Captura 03. |
+| Frontend | Abrí la página principal y entré a la pantalla administrativa. | Capturas 02 y 06. |
+| Herramientas | Revisé las versiones, las extensiones y los paquetes instalados. | Capturas 07, 13 y 13b. |
+| GitHub | Publiqué mi README, archivos de Docker, PDF y capturas en mi repositorio. | Capturas 08, 09, 15 y 16; registro `13-git-publicacion.txt`. |
+
+| MySQL nuevo y conexión del backend | Probé la inicialización con ocho tablas, `mysql_native_password` y HTTP 200 desde un backend temporal. | Capturas 14 y 14b; apartado 6.8. |
+
+Además, conservé los comandos del apartado 6 para repetir las pruebas si necesito volver a levantar la aplicación.
 
 ## 9. Conclusión
 
@@ -375,11 +463,11 @@ Lo que más trabajo me dio fue la conexión entre Node.js y MySQL. El contenedor
 
 También me sirvió aprender a usar Docker Compose, porque tener todos los servicios descritos en un mismo archivo facilita revisar sus configuraciones y volver a iniciarlos cuando sea necesario. Me quedó más claro para qué sirven los volúmenes, especialmente en MySQL, donde no quiero perder las tablas ni los usuarios cada vez que detengo un contenedor. Además, pude comprobar la diferencia entre acceder a un servicio desde el navegador mediante `localhost` y comunicar contenedores usando nombres internos como `mysql-db`.
 
-Otra parte importante fue trabajar con Git. Antes de publicar, revisé los archivos que había modificado y separé el repositorio del profesor de mi propio repositorio para no confundir los cambios. Después hice el commit y comprobé que apareciera en GitHub. Al finalizar, tenía el sistema de ventas funcionando, sus configuraciones guardadas y las capturas de las pruebas. Me llevo de esta actividad la importancia de revisar los errores con calma, entender qué está fallando y dejar escrito el procedimiento para poder repetirlo más adelante.
+Otra parte importante fue trabajar con Git. Antes de publicar, revisé los archivos que había modificado y separé el repositorio del profesor de mi propio repositorio para no confundir los cambios. Después hice el commit y comprobé que apareciera en GitHub. Al finalizar, tenía el sistema de ventas funcionando, sus configuraciones guardadas y las capturas de las pruebas. También pude comprobar con una base nueva que el ajuste de MySQL se aplicaba sin repetirlo manualmente. Me llevo de esta actividad la importancia de revisar los errores con calma, entender qué está fallando y dejar escrito el procedimiento para poder repetirlo más adelante.
 
-## 10. Recursos consultados
+## 10. Anexo: recursos de la comunidad de colaboración
 
-Para resolver las dudas que me fueron saliendo consulté el repositorio del profesor y las páginas de documentación de las herramientas que utilicé:
+Como apoyo para resolver dudas técnicas, consulté el repositorio del profesor y recursos de la comunidad que explican cómo funcionan las herramientas de esta actividad:
 
 | Recurso | Para qué lo utilicé |
 |---|---|
